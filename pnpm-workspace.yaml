@@ -1,0 +1,14 @@
+# pnpm 10+ reads settings from here rather than the "pnpm" field in package.json.
+# Native postinstall scripts are blocked unless allowlisted explicitly.
+#   unrs-resolver — native module resolver used by eslint-config-next
+#   sharp         — Next's image optimiser (pulled in on Vercel builds)
+allowBuilds:
+  unrs-resolver: true
+  sharp: true
+minimumReleaseAgeExclude:
+  - '@supabase/auth-js@2.112.1'
+  - '@supabase/functions-js@2.112.1'
+  - '@supabase/postgrest-js@2.112.1'
+  - '@supabase/realtime-js@2.112.1'
+  - '@supabase/storage-js@2.112.1'
+  - '@supabase/supabase-js@2.112.1'

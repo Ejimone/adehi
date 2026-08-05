@@ -1,0 +1,149 @@
+/* Explicit source scanning rather than auto-detection: deterministic, and it
+   won't wander into supabase/ or .next/ as the project grows. Path is relative
+   to this file, so '..' is src/. */
+@import 'tailwindcss' source(none);
+@source '..';
+
+/* ─── Design tokens ───────────────────────────────────────────────────────────
+   Monochrome by design. Contrast comes from type scale and grain, not hue.
+   --color-accent is deliberately aliased to paper so a colour can be introduced
+   later in exactly one place without touching a single component.
+   ────────────────────────────────────────────────────────────────────────── */
+
+@theme {
+  --color-void: #0a0a0b;
+  --color-paper: #f4f2ed;
+  --color-muted: #8a8a8e;
+  --color-line: rgb(244 242 237 / 0.1);
+  --color-accent: #f4f2ed;
+
+  /* Elevated surfaces. Two steps only — more reads as a dashboard, not a site. */
+  --color-raised: rgb(244 242 237 / 0.04);
+  --color-raised-hi: rgb(244 242 237 / 0.08);
+
+  /* One house easing curve, used everywhere. Expo-out. */
+  --ease-void: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Faces. next/font injects these variables onto <html>. */
+  --font-display: var(--font-clash), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  /* ── Fluid type scale ──────────────────────────────────────────────────────
+     Every step is clamp()ed, so there are no typographic breakpoints anywhere
+     in the codebase. Tight tracking on the big steps is what stops large
+     display type reading as "big body text". */
+
+  --text-display: clamp(3.25rem, 13vw, 12rem);
+  --text-display--line-height: 0.85;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 600;
+
+  --text-h1: clamp(2.5rem, 6.5vw, 5rem);
+  --text-h1--line-height: 0.95;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 600;
+
+  --text-h2: clamp(1.875rem, 4vw, 3.25rem);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.02em;
+  --text-h2--font-weight: 500;
+
+  --text-h3: clamp(1.375rem, 2.2vw, 2rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 500;
+
+  --text-lead: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --text-lead--line-height: 1.5;
+  --text-lead--letter-spacing: -0.01em;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.55;
+
+  /* Mono micro-labels. The wide tracking is what makes them read as labels. */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.2;
+  --text-micro--letter-spacing: 0.22em;
+}
+
+:root {
+  /* Three durations. Anything reaching for a fourth is probably wrong. */
+  --dur-micro: 0.4s;
+  --dur-macro: 0.8s;
+  --dur-hero: 1.2s;
+  --stagger: 0.06s;
+
+  /* Page gutter, fluid so it never crowds on small screens. */
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --measure: 68ch;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-void);
+    color: var(--color-paper);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    overflow-x: hidden;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  ::selection {
+    background: var(--color-paper);
+    color: var(--color-void);
+  }
+
+  /* Focus must survive a monochrome theme — the ring is the only affordance
+     left once colour is gone. Never remove this without a replacement. */
+  :focus-visible {
+    outline: 2px solid var(--color-paper);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Headings inherit the display face by default; body copy opts back out. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Page gutter + max measure. Used by every section on the site. */
+  .container-void {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 90rem;
+    padding-inline: var(--gutter);
+  }
+}
+
+/* Motion is a layer on top, never load-bearing. Strip it on request. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
