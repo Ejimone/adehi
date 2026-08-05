@@ -21,9 +21,9 @@ export function Surface({
   return (
     <div
       className={cn(
-        'border-line bg-raised rounded-2xl border',
+        'border-hairline bg-wash rounded-2xl border',
         interactive &&
-          'ease-void hover:bg-raised-hi hover:border-line transition-[background-color,transform,border-color] duration-[var(--dur-micro)] hover:-translate-y-1',
+          'ease-void hover:bg-wash hover:border-hairline transition-[background-color,transform,border-color] duration-[var(--dur-micro)] hover:-translate-y-1',
         className,
       )}
     >

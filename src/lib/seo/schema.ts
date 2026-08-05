@@ -2,7 +2,9 @@ import type { ProjectWithMedia, SiteSettingsResolved } from '@/lib/supabase/type
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3111'
 
-export function personSchema(s: SiteSettingsResolved | null): Record<string, unknown> | null {
+export function personSchema(
+  s: SiteSettingsResolved | null,
+): Record<string, unknown> | null {
   if (!s) return null
 
   return {

@@ -9,8 +9,8 @@ const base =
   'ease-void inline-flex items-center gap-2.5 rounded-full px-6 py-3 text-small font-medium transition-[background-color,border-color,color,transform] duration-[var(--dur-micro)] active:scale-[0.98]'
 
 const variants: Record<Variant, string> = {
-  solid: 'bg-paper text-void hover:bg-paper/90',
-  ghost: 'border-line text-paper hover:bg-raised hover:border-paper/25 border',
+  solid: 'bg-primary-strong text-bg hover:opacity-90',
+  ghost: 'border-hairline text-ink hover:bg-wash hover:border-paper/25 border',
 }
 
 /**

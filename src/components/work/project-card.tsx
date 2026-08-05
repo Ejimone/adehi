@@ -12,14 +12,14 @@ import type { ProjectCard as ProjectCardType } from '@/lib/supabase/types'
  */
 function CoverFallback({ title, index }: { title: string; index: number }) {
   return (
-    <div className="bg-raised absolute inset-0 flex items-center justify-center overflow-hidden">
+    <div className="bg-wash absolute inset-0 flex items-center justify-center overflow-hidden">
       <span
         aria-hidden="true"
-        className="text-paper/[0.06] font-display text-[clamp(6rem,22vw,16rem)] leading-none tracking-tighter select-none"
+        className="text-ink/[0.06] font-display text-[clamp(6rem,22vw,16rem)] leading-none tracking-tighter select-none"
       >
         {String(index + 1).padStart(2, '0')}
       </span>
-      <span className="text-muted absolute bottom-5 left-6 font-mono text-micro uppercase">
+      <span className="text-muted text-micro absolute bottom-5 left-6 font-sans uppercase">
         {title}
       </span>
     </div>
@@ -43,7 +43,7 @@ export function ProjectCard({
       className={cn('group ease-void block', className)}
       aria-label={`${project.title} — ${project.tagline || 'case study'}`}
     >
-      <div className="border-line bg-void relative aspect-[16/10] overflow-hidden rounded-2xl border">
+      <div className="border-hairline bg-bg relative aspect-[16/10] overflow-hidden rounded-2xl border">
         {project.cover_url ? (
           <Image
             src={project.cover_url}
@@ -61,7 +61,7 @@ export function ProjectCard({
       <div className="mt-6 flex items-baseline justify-between gap-6">
         <h3 className="text-h3 font-display">{project.title}</h3>
         {project.year ? (
-          <span className="text-muted shrink-0 font-mono text-micro">{project.year}</span>
+          <span className="text-muted text-micro shrink-0 font-sans">{project.year}</span>
         ) : null}
       </div>
 
@@ -70,7 +70,7 @@ export function ProjectCard({
       ) : null}
 
       {project.stack.length > 0 ? (
-        <p className="text-muted mt-4 font-mono text-micro uppercase">
+        <p className="text-muted text-micro mt-4 font-sans uppercase">
           {project.stack.slice(0, 4).join(' · ')}
         </p>
       ) : null}

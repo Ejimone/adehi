@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react'
 
+import { PageTransition } from '@/components/motion/page-transition'
+import { SmoothScroll } from '@/components/motion/smooth-scroll'
 import { Footer } from '@/components/site/footer'
 import { Grain } from '@/components/site/grain'
 import { Nav } from '@/components/site/nav'
+import { Preloader } from '@/components/site/preloader'
 import { JsonLd } from '@/components/seo/json-ld'
 import { getCurrentCv } from '@/lib/queries/about'
 import { getSiteSettings } from '@/lib/queries/site'
@@ -19,17 +22,26 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const name = settings?.full_name || 'Gabriel Adehi'
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Grain />
-      <JsonLd data={personSchema(settings)} />
-      <Nav name={name} available={settings?.available ?? false} />
-      <div className="relative z-10 flex-1">{children}</div>
-      <Footer
-        name={name}
-        email={settings?.email ?? ''}
-        socials={settings?.socials ?? []}
-        hasCv={Boolean(cv)}
-      />
-    </div>
+    // SmoothScroll and PageTransition both take `children` through untouched.
+    // JSX handed to a client component is still rendered on the server, so
+    // wrapping the entire site costs their runtimes and nothing else — every
+    // page below stays server-rendered and indexable.
+    <SmoothScroll>
+      <div className="flex min-h-screen flex-col">
+        <Preloader />
+        <Grain />
+        <JsonLd data={personSchema(settings)} />
+        <Nav name={name} />
+        <div className="relative z-10 flex-1">
+          <PageTransition>{children}</PageTransition>
+        </div>
+        <Footer
+          name={name}
+          email={settings?.email ?? ''}
+          socials={settings?.socials ?? []}
+          hasCv={Boolean(cv)}
+        />
+      </div>
+    </SmoothScroll>
   )
 }

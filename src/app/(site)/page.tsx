@@ -1,5 +1,10 @@
 import Link from 'next/link'
 
+import { Magnetic } from '@/components/motion/magnetic'
+import { Reveal } from '@/components/motion/reveal'
+import { SplitLine } from '@/components/motion/split-line'
+import { StackCards } from '@/components/motion/stack-cards'
+import { PortraitCluster } from '@/components/site/portrait-cluster'
 import { Action } from '@/components/ui/action'
 import { Container } from '@/components/ui/container'
 import { SectionLabel } from '@/components/ui/section-label'
@@ -17,49 +22,58 @@ export default async function HomePage() {
     getSkillGroups(),
   ])
 
-  const heroLines = settings?.hero_lines?.length
-    ? settings.hero_lines
-    : (settings?.full_name ?? 'Gabriel Adehi').split(' ')
+  const name = settings?.full_name ?? 'Gabriel Adehi'
+  const heroLines = settings?.hero_lines?.length ? settings.hero_lines : name.split(' ')
+
+  // Derived, not hardcoded — sections are conditional on having content, so
+  // fixed labels would skip a number whenever one is empty.
+  const sections = [
+    projects.length > 0 && 'work',
+    skillGroups.length > 0 && 'capabilities',
+    'contact',
+  ].filter(Boolean) as string[]
+
+  const idx = (key: string) => String(sections.indexOf(key) + 1).padStart(2, '0')
 
   return (
     <main>
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="flex min-h-[100svh] flex-col justify-between pt-[4.5rem] pb-12">
-        <div className="flex flex-1 items-center">
-          <Container>
-            {settings?.role_title ? (
-              <p className="text-muted mb-10 font-mono text-micro uppercase">
-                {settings.role_title}
-                {settings.location ? ` — ${settings.location}` : ''}
-              </p>
-            ) : null}
+      <section className="flex min-h-[100svh] flex-col justify-between pt-[7rem] pb-10">
+        <Container>
+          <PortraitCluster
+            portraits={settings?.portraits ?? []}
+            name={name}
+            className="mb-10"
+          />
 
-            <h1 className="text-display font-display">
-              {heroLines.map((line, i) => (
-                <span
-                  key={`${line}-${i}`}
-                  className={i % 2 === 1 ? 'text-muted block' : 'block'}
-                >
-                  {line}
-                </span>
-              ))}
-            </h1>
+          <h1 className="text-display font-display">
+            {heroLines.map((line, i) => (
+              <SplitLine key={`${line}-${i}`} text={line} delay={0.15 + i * 0.12} />
+            ))}
+          </h1>
 
-            {settings?.tagline ? (
-              <p className="text-lead text-muted mt-12 max-w-[52ch]">{settings.tagline}</p>
-            ) : null}
+          {settings?.tagline ? (
+            <Reveal delay={500}>
+              <p className="text-lead mt-10 max-w-[46ch]">{settings.tagline}</p>
+            </Reveal>
+          ) : null}
 
+          <Reveal delay={650}>
             <div className="mt-12 flex flex-wrap items-center gap-4">
-              <Action href="/work">Selected work</Action>
-              <Action href="/about" variant="ghost">
-                About
-              </Action>
+              <Magnetic>
+                <Action href="/work">Selected work</Action>
+              </Magnetic>
+              <Magnetic>
+                <Action href="/about" variant="ghost">
+                  About
+                </Action>
+              </Magnetic>
             </div>
-          </Container>
-        </div>
+          </Reveal>
+        </Container>
 
         <Container>
-          <div className="border-line text-muted flex items-center justify-between border-t pt-6 font-mono text-micro uppercase">
+          <div className="border-hairline text-muted text-micro flex items-center justify-between border-t pt-5 uppercase">
             <span>Scroll</span>
             <span aria-hidden="true">↓</span>
           </div>
@@ -68,51 +82,54 @@ export default async function HomePage() {
 
       {/* ── Selected work ─────────────────────────────────────────────────── */}
       {projects.length > 0 ? (
-        <section className="py-28">
+        <section className="py-24">
           <Container>
-            <div className="mb-16 flex items-end justify-between gap-8">
-              <SectionLabel index="01">Selected work</SectionLabel>
+            <div className="mb-14 flex items-end justify-between gap-8">
+              <SectionLabel index={idx('work')}>Selected work</SectionLabel>
               <Link
                 href="/work"
-                className="text-muted hover:text-paper text-small ease-void shrink-0 transition-colors duration-[var(--dur-micro)]"
+                className="text-muted hover:text-primary-strong text-small ease-void shrink-0 transition-colors duration-[var(--dur-micro)]"
               >
                 All work →
               </Link>
             </div>
 
-            {/* Phase 4 pins these and stacks them on scroll. The static grid is
-                the reduced-motion and no-JS presentation, so it has to stand on
-                its own rather than look like a broken animation. */}
-            <div className="grid gap-x-10 gap-y-20 md:grid-cols-2">
+            {/* Sticky offsets step down so each card rests slightly below the
+                one before it — that ledge is what makes the pile read as a
+                stack rather than a single swapped panel. */}
+            <StackCards className="relative">
               {projects.slice(0, 4).map((p, i) => (
-                <ProjectCard
+                <div
                   key={p.slug}
-                  project={p}
-                  index={i}
-                  priority={i === 0}
-                  className={i % 2 === 1 ? 'md:mt-24' : undefined}
-                />
+                  className="bg-bg sticky mb-16 origin-top last:mb-0"
+                  style={{ top: `${6 + i * 1.25}rem` }}
+                >
+                  <ProjectCard project={p} index={i} priority={i === 0} />
+                </div>
               ))}
-            </div>
+            </StackCards>
           </Container>
         </section>
       ) : null}
 
       {/* ── Capabilities ──────────────────────────────────────────────────── */}
       {skillGroups.length > 0 ? (
-        <section className="py-28">
+        <section className="py-24">
           <Container>
-            <SectionLabel index="02" className="mb-16">
+            <SectionLabel index={idx('capabilities')} className="mb-14">
               Capabilities
             </SectionLabel>
 
-            <div className="grid gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+            {/* The spine sits between the two columns on wide screens so the
+                grid hangs off it. Pushed off-canvas below lg, where a single
+                column has nothing to hang from. */}
+            <div className="spine grid gap-x-16 gap-y-12 max-lg:[--spine-x:-100vw] lg:grid-cols-2">
               {skillGroups.map((group) => (
-                <div key={group.id}>
-                  <h3 className="text-h3 font-display border-line border-b pb-4">
+                <div key={group.id} className="lg:odd:pr-10 lg:even:pl-10">
+                  <h3 className="text-h3 font-display border-hairline border-b pb-3">
                     {group.name}
                   </h3>
-                  <ul className="mt-5 space-y-2.5">
+                  <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
                     {group.skills.map((skill) => (
                       <li key={skill.id} className="text-muted text-small">
                         {skill.name}
@@ -127,24 +144,32 @@ export default async function HomePage() {
       ) : null}
 
       {/* ── Contact ───────────────────────────────────────────────────────── */}
-      <section className="py-28">
+      <section className="py-24">
         <Container>
-          <SectionLabel index="03" className="mb-14">
+          <SectionLabel index={idx('contact')} className="mb-12">
             Contact
           </SectionLabel>
 
-          <h2 className="text-h1 font-display max-w-[16ch]">
-            Let&rsquo;s build something worth shipping.
-          </h2>
+          <Reveal>
+            <h2 className="text-h1 font-display max-w-[15ch]">
+              Let&rsquo;s work together.
+            </h2>
+          </Reveal>
 
-          <div className="mt-12 flex flex-wrap items-center gap-4">
-            <Action href="/contact">Get in touch</Action>
-            {settings?.email ? (
-              <Action href={`mailto:${settings.email}`} variant="ghost">
-                {settings.email}
-              </Action>
-            ) : null}
-          </div>
+          <Reveal delay={120}>
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <Magnetic>
+                <Action href="/contact">Get in touch</Action>
+              </Magnetic>
+              {settings?.email ? (
+                <Magnetic>
+                  <Action href={`mailto:${settings.email}`} variant="ghost">
+                    {settings.email}
+                  </Action>
+                </Magnetic>
+              ) : null}
+            </div>
+          </Reveal>
         </Container>
       </section>
     </main>

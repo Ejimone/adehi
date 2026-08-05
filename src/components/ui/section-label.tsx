@@ -20,9 +20,9 @@ export function SectionLabel({
 }) {
   return (
     <div className={cn('flex items-center gap-4', className)}>
-      {index ? <span className="text-muted text-micro font-mono">{index}</span> : null}
+      {index ? <span className="text-muted text-micro font-sans">{index}</span> : null}
       <span className="bg-line h-px w-10 shrink-0" aria-hidden="true" />
-      <span className="text-muted text-micro font-mono uppercase">{children}</span>
+      <span className="text-muted text-micro font-sans uppercase">{children}</span>
     </div>
   )
 }

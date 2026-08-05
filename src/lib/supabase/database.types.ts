@@ -38,6 +38,7 @@ type SiteSettingsRow = {
   seo_keywords: string[]
   og_image_url: string | null
   portrait_url: string | null
+  portraits: string[]
   updated_at: string
 }
 

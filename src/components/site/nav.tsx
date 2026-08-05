@@ -12,7 +12,7 @@ const LINKS = [
   { label: 'Contact', href: '/contact' },
 ]
 
-export function Nav({ name, available }: { name: string; available: boolean }) {
+export function Nav({ name }: { name: string }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -24,8 +24,17 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Close on route change, and lock the page behind the overlay while it's open.
-  useEffect(() => setOpen(false), [pathname])
+  // Close the mobile menu on navigation.
+  //
+  // Adjusting state during render rather than in an effect: this is React's
+  // documented pattern for "reset state when a prop changes", it avoids the
+  // extra render pass an effect would cause, and unlike closing it from an
+  // onClick handler it also covers browser back/forward while the menu is open.
+  const [lastPath, setLastPath] = useState(pathname)
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    setOpen(false)
+  }
 
   useEffect(() => {
     if (!open) return
@@ -47,14 +56,18 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
         className={cn(
           'ease-void fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-[var(--dur-micro)]',
           scrolled && !open
-            ? 'border-line bg-void/70 border-b backdrop-blur-xl'
+            ? 'border-hairline bg-bg/70 border-b backdrop-blur-xl'
             : 'border-b border-transparent',
         )}
       >
         <div className="container-void flex h-[4.5rem] items-center justify-between">
+          {/* Outfit, not Poiret One. The display face is a single thin weight
+              built for large sizes — at 15px it goes spindly and loses contrast
+              against the cream. Wide tracking carries the brand character
+              instead. */}
           <Link
             href="/"
-            className="text-small font-display tracking-tight"
+            className="text-[0.9375rem] tracking-[0.08em] uppercase"
             aria-label={`${name} — home`}
           >
             {name}
@@ -68,7 +81,7 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
                 aria-current={isActive(l.href) ? 'page' : undefined}
                 className={cn(
                   'ease-void text-small relative transition-colors duration-[var(--dur-micro)]',
-                  isActive(l.href) ? 'text-paper' : 'text-muted hover:text-paper',
+                  isActive(l.href) ? 'text-ink' : 'text-muted hover:text-ink',
                 )}
               >
                 {l.label}
@@ -77,19 +90,12 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    'bg-paper ease-void absolute -bottom-1.5 left-0 h-px transition-[width] duration-[var(--dur-micro)]',
+                    'bg-primary-strong ease-void absolute -bottom-1.5 left-0 h-px transition-[width] duration-[var(--dur-micro)]',
                     isActive(l.href) ? 'w-full' : 'w-0',
                   )}
                 />
               </Link>
             ))}
-
-            {available ? (
-              <span className="text-muted flex items-center gap-2 font-mono text-micro uppercase">
-                <span className="bg-paper inline-block size-1.5 rounded-full" />
-                Available
-              </span>
-            ) : null}
           </nav>
 
           <button
@@ -109,7 +115,7 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
       <div
         id="mobile-menu"
         hidden={!open}
-        className="bg-void fixed inset-0 z-40 flex flex-col justify-center md:hidden"
+        className="bg-bg fixed inset-0 z-40 flex flex-col justify-center md:hidden"
       >
         <nav className="container-void flex flex-col gap-2" aria-label="Primary">
           {LINKS.map((l) => (
@@ -118,7 +124,7 @@ export function Nav({ name, available }: { name: string; available: boolean }) {
               href={l.href}
               className={cn(
                 'text-h1 font-display py-2',
-                isActive(l.href) ? 'text-paper' : 'text-muted',
+                isActive(l.href) ? 'text-ink' : 'text-muted',
               )}
             >
               {l.label}

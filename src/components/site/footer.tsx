@@ -16,7 +16,7 @@ export function Footer({
   const year = new Date().getFullYear()
 
   return (
-    <footer className="border-line mt-32 border-t">
+    <footer className="border-hairline mt-32 border-t">
       <div className="container-void py-14">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -30,19 +30,22 @@ export function Footer({
                 {email}
               </a>
             ) : null}
-            <p className="text-muted mt-4 font-mono text-micro uppercase">
+            <p className="text-muted text-micro mt-4 font-sans uppercase">
               © {year} {name}
             </p>
           </div>
 
-          <nav className="flex flex-wrap items-center gap-x-7 gap-y-3" aria-label="Footer">
+          <nav
+            className="flex flex-wrap items-center gap-x-7 gap-y-3"
+            aria-label="Footer"
+          >
             {socials.map((s) => (
               <a
                 key={s.url}
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted hover:text-paper text-small ease-void transition-colors duration-[var(--dur-micro)]"
+                className="text-muted hover:text-ink text-small ease-void transition-colors duration-[var(--dur-micro)]"
               >
                 {s.label}
               </a>
@@ -50,14 +53,14 @@ export function Footer({
             {hasCv ? (
               <a
                 href="/cv"
-                className="text-muted hover:text-paper text-small ease-void transition-colors duration-[var(--dur-micro)]"
+                className="text-muted hover:text-ink text-small ease-void transition-colors duration-[var(--dur-micro)]"
               >
                 CV
               </a>
             ) : null}
             <Link
               href="/work"
-              className="text-muted hover:text-paper text-small ease-void transition-colors duration-[var(--dur-micro)]"
+              className="text-muted hover:text-ink text-small ease-void transition-colors duration-[var(--dur-micro)]"
             >
               Work
             </Link>

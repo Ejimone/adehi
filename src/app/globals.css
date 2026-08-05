@@ -1,92 +1,112 @@
-/* Explicit source scanning rather than auto-detection: deterministic, and it
-   won't wander into supabase/ or .next/ as the project grows. Path is relative
-   to this file, so '..' is src/. */
 @import 'tailwindcss' source(none);
 @source '..';
 
 /* ─── Design tokens ───────────────────────────────────────────────────────────
-   Monochrome by design. Contrast comes from type scale and grain, not hue.
-   --color-accent is deliberately aliased to paper so a colour can be introduced
-   later in exactly one place without touching a single component.
+   Warm, light, and built on a single accent hue. The whole palette is derived
+   from one orange (#b55500): muted text, hairlines and borders are all that
+   orange at varying alpha rather than neutral greys. That is why the page reads
+   warm everywhere instead of just where the accent appears.
    ────────────────────────────────────────────────────────────────────────── */
 
 @theme {
-  --color-void: #0a0a0b;
-  --color-paper: #f4f2ed;
-  --color-muted: #8a8a8e;
-  --color-line: rgb(244 242 237 / 0.1);
-  --color-accent: #f4f2ed;
+  --color-bg: #fff2e0;
+  --color-white: #fffaf2;
+  --color-ink: #34170a;
 
-  /* Elevated surfaces. Two steps only — more reads as a dashboard, not a site. */
-  --color-raised: rgb(244 242 237 / 0.04);
-  --color-raised-hi: rgb(244 242 237 / 0.08);
+  /* --color-primary is for LARGE display accents, fills and borders only:
+     against the cream ground it measures 4.46:1, which clears AA for large
+     text but not for body text or small UI labels.
+     --color-primary-strong (6.73:1) is the one to use for accent TEXT, links,
+     and any solid fill carrying small type. */
+  --color-primary: #b55500;
+  --color-primary-strong: #8c3f00;
 
-  /* One house easing curve, used everywhere. Expo-out. */
+  /* Non-text tones are the accent at alpha — never a grey. That is what keeps
+     the page warm everywhere rather than only where the accent appears.
+     These are borders and fills, so no contrast minimum applies. */
+  --color-line: rgb(181 85 0 / 0.36);
+  --color-hairline: rgb(181 85 0 / 0.16);
+  --color-wash: rgb(181 85 0 / 0.05);
+
+  /* Muted TEXT is the ink at alpha, not the accent.
+     Measured against #fff2e0:
+       accent @ 64%  (the reference's own value) = 2.49:1  — fails WCAG AA badly
+       accent @ 100%                             = 4.46:1  — still under 4.5
+       ink    @ 72%                              = 6.31:1  — passes
+     This tone carries most of the body copy on the site, so it has to clear
+     4.5:1. The ink is itself a warm brown, so nothing cools down. */
+  --color-muted: rgb(52 23 10 / 0.72);
+
+  /* Dark ground, used only by the preloader and the footer block. */
+  --color-deep: #34170a;
+  --color-deep-2: #46200f;
+
+  /* One house easing curve. Expo-out. */
   --ease-void: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Faces. next/font injects these variables onto <html>. */
-  --font-display: var(--font-clash), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
-  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+  --font-display: var(--font-poiret), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 
   /* ── Fluid type scale ──────────────────────────────────────────────────────
-     Every step is clamp()ed, so there are no typographic breakpoints anywhere
-     in the codebase. Tight tracking on the big steps is what stops large
-     display type reading as "big body text". */
+     Poiret One is a single 400 weight with very thin strokes, so the display
+     steps get NO negative tracking — tightening a face this light muddies the
+     counters. It gets positive tracking instead, which is what makes it read
+     as art-deco rather than merely thin. */
 
-  --text-display: clamp(3.25rem, 13vw, 12rem);
-  --text-display--line-height: 0.85;
-  --text-display--letter-spacing: -0.04em;
-  --text-display--font-weight: 600;
+  --text-display: clamp(3rem, 11vw, 10rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: 0.01em;
+  --text-display--font-weight: 400;
 
-  --text-h1: clamp(2.5rem, 6.5vw, 5rem);
-  --text-h1--line-height: 0.95;
-  --text-h1--letter-spacing: -0.03em;
-  --text-h1--font-weight: 600;
+  --text-h1: clamp(2.25rem, 6vw, 4.5rem);
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: 0.01em;
+  --text-h1--font-weight: 400;
 
-  --text-h2: clamp(1.875rem, 4vw, 3.25rem);
-  --text-h2--line-height: 1.05;
-  --text-h2--letter-spacing: -0.02em;
-  --text-h2--font-weight: 500;
+  --text-h2: clamp(1.75rem, 3.6vw, 3rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: 0.01em;
+  --text-h2--font-weight: 400;
 
-  --text-h3: clamp(1.375rem, 2.2vw, 2rem);
-  --text-h3--line-height: 1.15;
-  --text-h3--letter-spacing: -0.015em;
-  --text-h3--font-weight: 500;
+  --text-h3: clamp(1.25rem, 2vw, 1.75rem);
+  --text-h3--line-height: 1.2;
+  --text-h3--font-weight: 400;
 
-  --text-lead: clamp(1.0625rem, 1.5vw, 1.375rem);
-  --text-lead--line-height: 1.5;
-  --text-lead--letter-spacing: -0.01em;
+  --text-lead: clamp(1.0625rem, 1.4vw, 1.3125rem);
+  --text-lead--line-height: 1.6;
 
   --text-body: 1rem;
-  --text-body--line-height: 1.65;
+  --text-body--line-height: 1.7;
 
   --text-small: 0.875rem;
-  --text-small--line-height: 1.55;
+  --text-small--line-height: 1.6;
 
-  /* Mono micro-labels. The wide tracking is what makes them read as labels. */
+  /* Micro-labels are Outfit with wide tracking, not a mono face — the
+     reference uses two faces total and adding a third would dilute it. */
   --text-micro: 0.6875rem;
   --text-micro--line-height: 1.2;
-  --text-micro--letter-spacing: 0.22em;
+  --text-micro--letter-spacing: 0.2em;
 }
 
 :root {
-  /* Three durations. Anything reaching for a fourth is probably wrong. */
   --dur-micro: 0.4s;
   --dur-macro: 0.8s;
   --dur-hero: 1.2s;
   --stagger: 0.06s;
 
-  /* Page gutter, fluid so it never crowds on small screens. */
-  --gutter: clamp(1.25rem, 5vw, 5rem);
-  --measure: 68ch;
+  --gutter: clamp(20px, 4vw, 56px);
+  --measure: 66ch;
+
+  /* The spine: a hairline running the height of the page that sections hang
+     off. Position is a variable so a section can shift it if it ever needs to. */
+  --spine-x: 50%;
+  --spine-stroke: 1px;
 }
 
 @layer base {
   html {
-    background-color: var(--color-void);
-    color: var(--color-paper);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -97,27 +117,26 @@
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
+    font-weight: 300;
   }
 
   ::selection {
-    background: var(--color-paper);
-    color: var(--color-void);
+    background: var(--color-primary);
+    color: var(--color-bg);
   }
 
-  /* Focus must survive a monochrome theme — the ring is the only affordance
-     left once colour is gone. Never remove this without a replacement. */
   :focus-visible {
-    outline: 2px solid var(--color-paper);
+    outline: 2px solid var(--color-primary);
     outline-offset: 3px;
     border-radius: 2px;
   }
 
-  /* Headings inherit the display face by default; body copy opts back out. */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
+    font-weight: 400;
     text-wrap: balance;
   }
 
@@ -127,12 +146,182 @@
 }
 
 @layer components {
-  /* Page gutter + max measure. Used by every section on the site. */
   .container-void {
     width: 100%;
     margin-inline: auto;
-    max-width: 90rem;
+    max-width: 84rem;
     padding-inline: var(--gutter);
+  }
+
+  /* ── The spine ─────────────────────────────────────────────────────────────
+     A vertical hairline behind the content. Decorative, so it is aria-hidden
+     at the element level and simply absent under reduced-data conditions. */
+  .spine {
+    position: relative;
+  }
+
+  .spine::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--spine-x);
+    width: var(--spine-stroke);
+    background: var(--color-hairline);
+    pointer-events: none;
+  }
+
+  /* ── Per-character display reveal ──────────────────────────────────────────
+     Used by SplitLine. Starts translated fully below its mask; `backwards`
+     fill applies the from-state during the stagger delay, so later characters
+     stay hidden instead of flashing into place before their turn. */
+  @keyframes rise {
+    from {
+      transform: translateY(105%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-rise {
+    animation: rise var(--dur-hero) var(--ease-void) backwards;
+  }
+
+  /* ── Page transition ───────────────────────────────────────────────────────
+     Enter-only. App Router replaces children before an exit animation could
+     finish, so exit transitions there are unreliable; a clean entrance reads
+     nearly identically and never leaves a half-faded page behind. */
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .animate-page-in {
+    animation: page-in var(--dur-macro) var(--ease-void) both;
+  }
+
+  /* ── Scroll reveals ────────────────────────────────────────────────────────
+     Gated behind `.js` on <html>, set by an inline script before first paint.
+     Without that gate a JS failure would leave every revealed section
+     permanently invisible — content must never depend on script succeeding. */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity var(--dur-macro) var(--ease-void),
+      transform var(--dur-macro) var(--ease-void);
+    will-change: opacity, transform;
+  }
+
+  .js [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  /* Case-study prose, on a light warm ground. */
+  .prose-void {
+    color: var(--color-ink);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  .prose-void > * + * {
+    margin-top: 1.5em;
+  }
+
+  .prose-void h2 {
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    margin-top: 2.5em;
+  }
+
+  .prose-void h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    margin-top: 2em;
+  }
+
+  .prose-void strong {
+    font-weight: 500;
+  }
+
+  .prose-void a {
+    color: var(--color-primary-strong);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-line);
+    transition: text-decoration-color var(--dur-micro) var(--ease-void);
+  }
+
+  .prose-void a:hover {
+    text-decoration-color: var(--color-primary-strong);
+  }
+
+  .prose-void ul,
+  .prose-void ol {
+    padding-left: 1.25em;
+  }
+
+  .prose-void ul {
+    list-style: disc;
+  }
+
+  .prose-void ol {
+    list-style: decimal;
+  }
+
+  .prose-void li + li {
+    margin-top: 0.5em;
+  }
+
+  .prose-void li::marker {
+    color: var(--color-primary-strong);
+  }
+
+  .prose-void blockquote {
+    border-left: var(--spine-stroke) solid var(--color-line);
+    padding-left: 1.5em;
+    font-family: var(--font-display);
+    font-size: var(--text-lead);
+  }
+
+  .prose-void code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.875em;
+    background: var(--color-wash);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+
+  .prose-void pre {
+    background: var(--color-wash);
+    border: 1px solid var(--color-hairline);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .prose-void pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .prose-void hr {
+    border-color: var(--color-hairline);
+    margin-block: 3em;
+  }
+
+  .prose-void img {
+    border-radius: 0.75rem;
   }
 }
 
@@ -145,5 +334,13 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Reveals must land VISIBLE, not merely animate faster. Shortening the
+     transition alone would leave anything below the fold at opacity 0 until it
+     scrolled past, because the observer still gates the state change. */
+  .js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
